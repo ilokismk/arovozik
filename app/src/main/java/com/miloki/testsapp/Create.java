@@ -1,6 +1,7 @@
 package com.miloki.testsapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -8,6 +9,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import androidx.activity.EdgeToEdge;
@@ -16,8 +19,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -30,8 +36,10 @@ public class Create extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create);
 
+        SharedPreferences sp = getSharedPreferences("username", MODE_PRIVATE);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uname = user.getDisplayName();
+        String uname = sp.getString("name", "");
         String uemail = user.getEmail();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -80,6 +88,22 @@ public class Create extends AppCompatActivity {
             test.setQ1(q1);
             db.collection("tests").document(test.getName()).set(test);
             Toast.makeText(this, "Тест успешно создан", Toast.LENGTH_SHORT).show();
+
+            db.collection("users").document(uname).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    User u = documentSnapshot.toObject(User.class);
+                    ArrayList <String> t = u.getTests();
+                    if(t.get(0) == "") {
+                        t.remove(0);
+                    }
+                    t.add(test.getName().toString());
+                    DocumentReference usr = db.collection("users").document(uname);
+                    usr.update("tests", t);
+                }
+            });
+
+
             startActivity(new Intent(this, MainActivity2.class));
         });
     }

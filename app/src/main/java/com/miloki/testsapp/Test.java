@@ -1,5 +1,6 @@
 package com.miloki.testsapp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Test {
@@ -17,10 +18,14 @@ public class Test {
     // [6] ans;
     private Question q1;
 
+    private ArrayList<String> solves;
+
     public Test() {
         this.name = "";
         this.author = "";
         this.questionCount = 1;
+        solves = new ArrayList<String>();
+        solves.add("");
     }
 
     public Test(
@@ -32,6 +37,8 @@ public class Test {
         this.author = author;
         this.questionCount = questionCount;
         this.q1 = q1;
+        solves = new ArrayList<String>();
+        solves.add("");
     }
 
     public String getName() {
@@ -61,5 +68,12 @@ public class Test {
 
     public void setQuestionCount(int q) {
         this.questionCount = q;
+    }
+    public ArrayList<String> getSolves () {
+        return solves;
+    }
+
+    public void setSolves(ArrayList<String> tests) {
+        this.solves = tests;
     }
 }

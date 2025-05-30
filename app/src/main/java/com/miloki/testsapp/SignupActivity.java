@@ -2,6 +2,7 @@ package com.miloki.testsapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,14 +30,16 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        var sp = getSharedPreferences("PC", Context.MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("username", MODE_PRIVATE);
 
         TextView email = findViewById(R.id.email);
         TextView password = findViewById(R.id.password);
         ConstraintLayout button = findViewById(R.id.button);
         TextView signin = findViewById(R.id.signintext);
+        EditText un = findViewById(R.id.username);
         signin.setOnClickListener(v -> startActivity(new Intent(this, MainActivity.class)));
         mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         button.setOnClickListener(v -> {
             mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
@@ -44,17 +47,14 @@ public class SignupActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                FirebaseUser user = mAuth.getCurrentUser();
+                                Toast.makeText(SignupActivity.this, "Вы зарегестрированы!", Toast.LENGTH_SHORT).show();
 
-                                Toast.makeText(SignupActivity.this, "Вы зарегестрированы!",
-                                        Toast.LENGTH_SHORT).show();
+                                sp.edit().putString("name", un.getText().toString()).apply();
+                                User user = new User();
+                                user.setUname(un.getText().toString());
+                                db.collection("users").document(user.getUname()).set(user);
 
-                                EditText un = findViewById(R.id.username);
-
-                                Intent intent = new Intent(SignupActivity.this, MainActivity2.class);
-                                updateProfile(un.getText().toString());
-                                //intent.putExtra("un", un.getText().toString());
-                                startActivity((intent));
+                                startActivity(new Intent(SignupActivity.this, MainActivity2.class));
                                 //updateUI(user);
                             } else {
                                 Toast.makeText(SignupActivity.this, "Произошла ошибка. Попробуйте снова",
@@ -72,14 +72,7 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
-    public void updateProfile(String un) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(un)
-                .build();
 
-        user.updateProfile(profileUpdates);
-    }
 }
 

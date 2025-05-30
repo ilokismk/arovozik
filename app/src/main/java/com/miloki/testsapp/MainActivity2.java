@@ -2,16 +2,23 @@ package com.miloki.testsapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 public class MainActivity2 extends AppCompatActivity {
     @Override
@@ -19,21 +26,24 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+        SharedPreferences sp = getSharedPreferences("username", MODE_PRIVATE);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String name = user.getDisplayName();
         String email = user.getEmail();
-        Uri photoUrl = user.getPhotoUrl();
+
+        String name = sp.getString("name", "");
 
         boolean emailVerified = user.isEmailVerified();
         String uid = user.getUid();
 
         Intent intent = getIntent();
+
         TextView emailName = findViewById(R.id.emailName);
         emailName.setText("Email: " + email);
         TextView username = findViewById(R.id.username);
-        username.setText("Имя пользователя: " + intent.getStringExtra("un"));
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(intent.getStringExtra("un")).build();
-        user.updateProfile(profileUpdates);
+        username.setText("Имя пользователя: " + name);
+
+
 
         Button logout = findViewById(R.id.logout);
         logout.setOnClickListener(v -> {
