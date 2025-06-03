@@ -52,7 +52,8 @@ public class SignupActivity extends AppCompatActivity {
                                 sp.edit().putString("name", un.getText().toString()).apply();
                                 User user = new User();
                                 user.setUname(un.getText().toString());
-                                db.collection("users").document(user.getUname()).set(user);
+                                db.collection("users").document(email.getText().toString()).set(un.getText().toString());
+                                db.collection("usernames").document().set(user);
 
                                 startActivity(new Intent(SignupActivity.this, MainActivity2.class));
                                 //updateUI(user);

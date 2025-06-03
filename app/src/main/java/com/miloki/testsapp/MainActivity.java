@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                Toast.makeText(MainActivity.this, "Все норм",
+                                Toast.makeText(MainActivity.this, "Вы вошли в аккаунт",
                                         Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(MainActivity.this, MainActivity2.class));
                                 //updateUI(user);
                             } else {
-                                Toast.makeText(MainActivity.this, "Authentication failed.",
+                                Toast.makeText(MainActivity.this, "Войти не удалось",
                                         Toast.LENGTH_SHORT).show();
                                 //updateUI(null);
                             }
