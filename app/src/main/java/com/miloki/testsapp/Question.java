@@ -13,11 +13,13 @@ public class Question {
     private String option3;
     private String option4;
     private String ans;
+    private int weight;
 
     public Question() {
         this.text = "";
         this.type = "one";
         this.ans = "1";
+        this.weight = 1;
     }
 
     public Question(
@@ -37,10 +39,6 @@ public class Question {
         this.ans = ans;
     }
 
-    public List <String> toList() {
-        List<String> a = Arrays.asList(this.text, this.type, this.option1, this.option2, this.option3, this.option4, this.ans);
-        return a;
-    }
 
     public void setText(String text) {
         this.text = text;
@@ -59,6 +57,10 @@ public class Question {
 
     public void setAns(String ans) {
         this.ans = ans;
+    }
+
+    public void setWeight (int weight) {
+        this.weight = weight;
     }
 
     public String getText() {
@@ -81,6 +83,9 @@ public class Question {
     }
     public String getAns() {
         return this.ans;
+    }
+    public int getWeight() {
+        return this.weight;
     }
 
     public String stringOptions() {

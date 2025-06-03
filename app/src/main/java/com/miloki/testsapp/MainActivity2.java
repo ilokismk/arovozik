@@ -12,9 +12,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Collections;
 import java.util.Map;
@@ -31,12 +34,21 @@ public class MainActivity2 extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String email = user.getEmail();
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("usernames").document(email)
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        Username un = documentSnapshot.toObject(Username.class);
+                        TextView username = findViewById(R.id.username);
+                        username.setText("Имя пользователя: " + un.getName());
+                    }
+                });
+
+
         String name = sp.getString("name", "");
 
-        boolean emailVerified = user.isEmailVerified();
-        String uid = user.getUid();
 
-        Intent intent = getIntent();
 
         TextView emailName = findViewById(R.id.emailName);
         emailName.setText("Email: " + email);

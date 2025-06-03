@@ -21,6 +21,8 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -42,28 +44,45 @@ public class SignupActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         button.setOnClickListener(v -> {
-            mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(SignupActivity.this, "Вы зарегестрированы!", Toast.LENGTH_SHORT).show();
+            if (passwordCheck(password.getText().toString()) && emailCheck(email.getText().toString()) && usernameCheck(un.getText().toString())) {
+                mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(SignupActivity.this, "Вы зарегестрированы!", Toast.LENGTH_SHORT).show();
 
-                                sp.edit().putString("name", un.getText().toString()).apply();
-                                User user = new User();
-                                user.setUname(un.getText().toString());
-                                db.collection("users").document(email.getText().toString()).set(un.getText().toString());
-                                db.collection("usernames").document().set(user);
+                                    sp.edit().putString("name", un.getText().toString()).apply();
+                                    User user = new User();
+                                    user.setUname(un.getText().toString());
 
-                                startActivity(new Intent(SignupActivity.this, MainActivity2.class));
-                                //updateUI(user);
-                            } else {
-                                Toast.makeText(SignupActivity.this, "Произошла ошибка. Попробуйте снова",
-                                        Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
+                                    Map<String, Object> m = new HashMap<>();
+                                    m.put("name", un.getText().toString());
+
+                                    db.collection("usernames").document(email.getText().toString()).set(m);
+                                    db.collection("users").document(un.getText().toString()).set(user);
+
+                                    startActivity(new Intent(SignupActivity.this, MainActivity2.class));
+                                    //updateUI(user);
+                                } else {
+                                    Toast.makeText(SignupActivity.this, "Произошла ошибка. Возможно такой email уже зарегестрирован", Toast.LENGTH_SHORT).show();
+                                    //updateUI(null);
+                                }
                             }
-                        }
-                    });
+                        });
+            }
+            else {
+                if (!emailCheck(email.getText().toString())) {
+                    Toast.makeText(SignupActivity.this, "Введите корректный email", Toast.LENGTH_SHORT).show();
+                }
+                if (!passwordCheck(password.getText().toString())) {
+                    Toast.makeText(SignupActivity.this, "Пароль должен содержать от 6 до 20 цифр", Toast.LENGTH_SHORT).show();
+                }
+                if (!usernameCheck(un.getText().toString())) {
+                    Toast.makeText(SignupActivity.this, "Имя пользователя должно содержать от 3 до 14 символов", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         });
 
     }
@@ -73,7 +92,35 @@ public class SignupActivity extends AppCompatActivity {
 
     }
 
-
+    public boolean passwordCheck(String p) {
+        if (p.length() >= 6 && p.length() <= 20 && p.matches("-?\\d+")) {
+            return true;
+        }
+        return false;
+    }
+    public boolean emailCheck(String p) {
+        if (isValidEmail(p)) {
+            return true;
+        }
+        return false;
+    }
+    public boolean usernameCheck(String p) {
+        if (p.length() >= 3 && p.length() <= 14) {
+            return true;
+        }
+        return false;
+    }
+    public boolean isUsernameExist(String p) {
+        if (p.length() >= 3 && p.length() <= 14) {
+            return true;
+        }
+        return false;
+    }
+    public boolean isValidEmail(String email) {
+        String regex = "^[\\w.-]+@([\\w\\-]+\\.)+[A-Z]{2,6}$"; // Регулярное выражение для проверки email
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        return pattern.matcher(email).matches();
+    }
 
 }
 

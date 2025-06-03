@@ -96,6 +96,7 @@
                 android:layout_marginTop="32dp"
                 android:text="Название теста"
                 android:textColor="@color/black"
+
                 android:textSize="20dp"
 
                 />
