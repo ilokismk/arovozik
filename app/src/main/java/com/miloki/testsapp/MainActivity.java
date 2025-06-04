@@ -26,6 +26,10 @@ import com.google.firebase.firestore.Source;
 import com.miloki.testsapp.MainActivity2;
 import com.miloki.testsapp.SignupActivity;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -51,34 +55,45 @@ public class MainActivity extends AppCompatActivity {
         });
 
         button.setOnClickListener(v -> {
-            mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                db.collection("usernames").document(email.getText().toString())
-                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                Username un = documentSnapshot.toObject(Username.class);
-                                                sp.edit().putString("name", un.getName()).apply();
-                                                //email.setText(un.getName());
-                                            }
-                                        });
-                                Toast.makeText(MainActivity.this, "Вы вошли в аккаунт",
-                                        Toast.LENGTH_SHORT).show();
+            if (passwordCheck(password.getText().toString()) && emailCheck(email.getText().toString())) {
+                mAuth.signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    db.collection("usernames").document(email.getText().toString())
+                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                    Username un = documentSnapshot.toObject(Username.class);
+                                                    sp.edit().putString("name", un.getName()).apply();
+                                                    //email.setText(un.getName());
+                                                }
+                                            });
+                                    Toast.makeText(MainActivity.this, "Вы вошли в аккаунт",
+                                            Toast.LENGTH_SHORT).show();
 
 
 
-                                startActivity(new Intent(MainActivity.this, MainActivity2.class));
-                                //updateUI(user);
-                            } else {
-                                Toast.makeText(MainActivity.this, "Войти не удалось",
-                                        Toast.LENGTH_SHORT).show();
-                                //updateUI(null);
+                                    startActivity(new Intent(MainActivity.this, MainActivity2.class));
+                                    //updateUI(user);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Войти не удалось",
+                                            Toast.LENGTH_SHORT).show();
+                                    //updateUI(null);
+                                }
                             }
-                        }
-                    });
+                        });
+            }
+            else {
+                if (!emailCheck(email.getText().toString())) {
+                    Toast.makeText(MainActivity.this, "Введите корректный email", Toast.LENGTH_SHORT).show();
+                }
+                if (!passwordCheck(password.getText().toString())) {
+                    Toast.makeText(MainActivity.this, "Пароль должен содержать от 6 до 20 цифр", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         });
     }
 
@@ -90,6 +105,25 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser != null){
             startActivity(new Intent(this, MainActivity2.class));
         }
+    }
+
+
+    public boolean passwordCheck(String p) {
+        if (p.length() >= 6 && p.length() <= 20 && p.matches("-?\\d+")) {
+            return true;
+        }
+        return false;
+    }
+    public boolean emailCheck(String p) {
+        if (isValidEmail(p)) {
+            return true;
+        }
+        return false;
+    }
+    public boolean isValidEmail(String email) {
+        String regex = "^[\\w.-]+@([\\w\\-]+\\.)+[A-Z]{2,6}$"; // Регулярное выражение для проверки email
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        return pattern.matcher(email).matches();
     }
 
     @Override

@@ -110,12 +110,6 @@ public class SignupActivity extends AppCompatActivity {
         }
         return false;
     }
-    public boolean isUsernameExist(String p) {
-        if (p.length() >= 3 && p.length() <= 14) {
-            return true;
-        }
-        return false;
-    }
     public boolean isValidEmail(String email) {
         String regex = "^[\\w.-]+@([\\w\\-]+\\.)+[A-Z]{2,6}$"; // Регулярное выражение для проверки email
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);

@@ -72,36 +72,42 @@ public class Create extends AppCompatActivity {
 
         findViewById(R.id.ok).setOnClickListener((view)->{
             EditText name = findViewById(R.id.testName);
+            if (!name.getText().toString().isEmpty())
+            {
 
-            test.setName(name.getText().toString());
+                test.setName(name.getText().toString());
 
-            name = findViewById(R.id.qtext1);
-            test.setAuthor(uname);
-            q1.setText(name.getText().toString());
-            List<EditText> o1= Arrays.asList(findViewById(R.id.option1_1), findViewById(R.id.option2_1), findViewById(R.id.option3_1), findViewById(R.id.option4_1));
-            q1.setOptions(o1.get(0).getText().toString(), o1.get(1).getText().toString(), o1.get(2).getText().toString(), o1.get(3).getText().toString());
-            if (q1.getType() == "ans") {
-                EditText ans = findViewById(R.id.ans1);
-                q1.setAns(ans.getText().toString());
-            }
-
-            test.setQ1(q1);
-            db.collection("tests").document(test.getName()).set(test);
-            Toast.makeText(this, "Тест успешно создан", Toast.LENGTH_SHORT).show();
-
-            db.collection("users").document(uname).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    User u = documentSnapshot.toObject(User.class);
-                    ArrayList <String> t = u.getTests();
-                    if(t.get(0) == "") {
-                        t.remove(0);
-                    }
-                    t.add(test.getName().toString());
-                    DocumentReference usr = db.collection("users").document(uname);
-                    usr.update("tests", t);
+                name = findViewById(R.id.qtext1);
+                test.setAuthor(uname);
+                q1.setText(name.getText().toString());
+                List<EditText> o1 = Arrays.asList(findViewById(R.id.option1_1), findViewById(R.id.option2_1), findViewById(R.id.option3_1), findViewById(R.id.option4_1));
+                q1.setOptions(o1.get(0).getText().toString(), o1.get(1).getText().toString(), o1.get(2).getText().toString(), o1.get(3).getText().toString());
+                if (q1.getType() == "ans") {
+                    EditText ans = findViewById(R.id.ans1);
+                    q1.setAns(ans.getText().toString());
                 }
-            });
+
+                test.setQ1(q1);
+                db.collection("tests").document(test.getName()).set(test);
+                Toast.makeText(this, "Тест успешно создан", Toast.LENGTH_SHORT).show();
+
+                db.collection("users").document(uname).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        User u = documentSnapshot.toObject(User.class);
+                        ArrayList<String> t = u.getTests();
+                        if (t.get(0) == "") {
+                            t.remove(0);
+                        }
+                        t.add(test.getName().toString());
+                        DocumentReference usr = db.collection("users").document(uname);
+                        usr.update("tests", t);
+                    }
+                });
+            }
+            else {
+                Toast.makeText(this, "Название теста не должно быть пустым", Toast.LENGTH_SHORT).show();
+            }
 
 
             startActivity(new Intent(this, MainActivity2.class));

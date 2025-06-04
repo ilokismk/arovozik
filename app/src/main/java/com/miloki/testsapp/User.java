@@ -12,6 +12,11 @@ public class User {
         tests.add("");
     }
 
+    public User(User user) {
+        this.uname = user.uname;
+        this.tests = user.tests;
+    }
+
     public String getUname() {
         return uname;
     }
@@ -26,5 +31,9 @@ public class User {
 
     public void setUname(String uname) {
         this.uname = uname;
+    }
+
+    public String toString() {
+        return uname + " " + tests.toString();
     }
 }

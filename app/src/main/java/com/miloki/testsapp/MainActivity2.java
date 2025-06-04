@@ -70,6 +70,9 @@ public class MainActivity2 extends AppCompatActivity {
         Button createTest = findViewById(R.id.createTest);
         createTest.setOnClickListener(v -> startActivity(new Intent(this, Create.class)));
 
+        Button myTests = findViewById(R.id.myTests);
+        myTests.setOnClickListener(v -> startActivity(new Intent(this, MyTests.class)));
+
     }
 
     @Override
