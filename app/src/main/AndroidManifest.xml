@@ -6,9 +6,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/bgdg"
+        android:label="QuizEase"
+        android:roundIcon="@drawable/bgdg"
         android:supportsRtl="true"
         android:theme="@style/Theme.TestsApp"
         tools:targetApi="31">
@@ -22,13 +22,7 @@
             android:name=".Results"
             android:exported="false" />
         <activity
-            android:name=".EditProfile"
-            android:exported="false" />
-        <activity
             android:name=".Create"
-            android:exported="false" />
-        <activity
-            android:name=".CreateTest"
             android:exported="false" />
         <activity
             android:name=".TestFound"
